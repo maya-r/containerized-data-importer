@@ -66,6 +66,8 @@ The controller scans PVCs within its namespace by looking for specific annotatio
 - [clone-block-datavolume.yaml](../manifests/example/clone-block-datavolume.yaml)
 - [clone-datavolume.yaml](../manifests/example/clone-datavolume.yaml)
 - [endpoint-secret.yaml](../manifests/example/endpoint-secret.yaml)
+One or more endpoint secrets in the "golden" namespace are required for non-public endpoints. If the endpoint is public there is no need to an endpoint secret. No namespace is supplied since the secret is expected to be created from the "golden" namespace.
+
 - [example-cdiconfig.yaml](../manifests/example/example-cdiconfig.yaml)
 - [import-archive-block-datavolume.yaml](../manifests/example/import-archive-block-datavolume.yaml)
 - [import-archive-datavolume.yaml](../manifests/example/import-archive-datavolume.yaml)
@@ -80,12 +82,3 @@ The controller scans PVCs within its namespace by looking for specific annotatio
 - [upload-datavolume-token.yaml](../manifests/example/upload-datavolume-token.yaml)
 - [upload-datavolume.yaml](../manifests/example/upload-datavolume.yaml)
 - [vm-dv.yaml](../manifests/example/vm-dv.yaml)
-
-###### endpoint-secret.yaml
-
-One or more endpoint secrets in the "golden" namespace are required for non-public endpoints. If the endpoint is public there is no need to an endpoint secret. No namespace is supplied since the secret is expected to be created from the "golden" namespace.
-
-
-###### golden-pvc.yaml
-
-This is the template PVC. A storage class will need to be added if the default storage provider does not met the needs of golden images. For example, when copying VM image files, the backend storage should support fast-cloning, and thus a non-default storage class may be needed.
