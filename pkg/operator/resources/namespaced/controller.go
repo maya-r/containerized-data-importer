@@ -81,7 +81,7 @@ func createControllerServiceAccount() *corev1.ServiceAccount {
 }
 
 func createControllerDeployment(controllerImage, importerImage, clonerImage, uploadServerImage, verbosity, pullPolicy string) *appsv1.Deployment {
-	deployment := utils.CreateDeployment(controllerResourceName, "app", "containerized-data-importer", controllerServiceAccount, int32(1))
+	deployment := utils.CreateDeployment(controllerResourceName, "app", "containerized-data-importer", controllerServiceAccount, int32(2))
 	container := utils.CreateContainer("cdi-controller", controllerImage, verbosity, corev1.PullPolicy(pullPolicy))
 	container.Env = []corev1.EnvVar{
 		{
