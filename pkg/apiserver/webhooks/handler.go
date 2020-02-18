@@ -49,6 +49,11 @@ type admissionHandler struct {
 	a Admitter
 }
 
+// NewCDIValidatingWebhook creates a new CDI webhook
+func NewCDIValidatingWebhook(client kubernetes.Interface) http.Handler {
+	return newAdmissionHandler(&cdiValidatingWebhook{client: client})
+}
+
 // NewDataVolumeValidatingWebhook creates a new DataVolumeValidation webhook
 func NewDataVolumeValidatingWebhook(client kubernetes.Interface) http.Handler {
 	return newAdmissionHandler(&dataVolumeValidatingWebhook{client: client})

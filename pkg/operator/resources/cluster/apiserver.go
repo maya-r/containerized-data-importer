@@ -166,7 +166,7 @@ func createAPIServerValidatingWebhook(namespace string, c client.Client, l logr.
 					Rule: admissionregistrationv1beta1.Rule{
 						APIGroups:   []string{cdicorev1alpha1.SchemeGroupVersion.Group},
 						APIVersions: []string{cdicorev1alpha1.SchemeGroupVersion.Version},
-						Resources:   []string{"datavolumes"},
+						Resources:   []string{"cdi"},
 					},
 				}},
 				ClientConfig: admissionregistrationv1beta1.WebhookClientConfig{

@@ -58,6 +58,8 @@ const (
 	uploadTokenGroup   = "upload.cdi.kubevirt.io"
 	uploadTokenVersion = "v1alpha1"
 
+	cdiValidatePath = "/cdi-validate"
+
 	dvValidatePath = "/datavolume-validate"
 
 	dvMutatePath = "/datavolume-mutate"
@@ -471,7 +473,8 @@ func (app *cdiAPIApp) healthzHandler(req *restful.Request, resp *restful.Respons
 }
 
 func (app *cdiAPIApp) createValidatingWebhook() error {
-	app.container.ServeMux.Handle(dvValidatePath, webhooks.NewDataVolumeValidatingWebhook(app.client))
+	//app.container.ServeMux.Handle(dvValidatePath, webhooks.NewDataVolumeValidatingWebhook(app.client))
+	app.container.ServeMux.Handle(dvValidatePath, webhooks.NewCDIValidatingWebhook(app.client))
 	return nil
 }
 
