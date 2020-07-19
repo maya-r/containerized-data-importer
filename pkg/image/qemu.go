@@ -189,8 +189,8 @@ func (o *qemuOperations) Validate(url *url.URL, availableSize int64) error {
 		return errors.Errorf("Image %s is invalid because it has backing file %s", url.String(), info.BackingFile)
 	}
 
-	if availableSize < info.VirtualSize {
-		return errors.Errorf("Virtual image size %d is larger than available size %d. A larger PVC is required.", info.VirtualSize, availableSize)
+	if int64(float64(availableSize)*0.8) < info.VirtualSize {
+		return errors.Errorf("Virtual image size %d is larger than available size %d (PVC size %d, reserved overhead %f%%). A larger PVC is required.", info.VirtualSize, int64(0.8*float64(availableSize)), info.VirtualSize, 0.2)
 	}
 	return nil
 }
