@@ -58,7 +58,7 @@ type QEMUOperations interface {
 	ConvertToRawStream(*url.URL, string) error
 	Resize(string, resource.Quantity) error
 	Info(url *url.URL) (*ImgInfo, error)
-	Validate(*url.URL, int64) error
+	Validate(*url.URL, int64, float64) error
 	CreateBlankImage(string, resource.Quantity) error
 }
 
@@ -175,7 +175,7 @@ func isSupportedFormat(value string) bool {
 	}
 }
 
-func (o *qemuOperations) Validate(url *url.URL, availableSize int64) error {
+func (o *qemuOperations) Validate(url *url.URL, availableSize int64, storageOverhead float64) error {
 	info, err := o.Info(url)
 	if err != nil {
 		return err
@@ -189,8 +189,8 @@ func (o *qemuOperations) Validate(url *url.URL, availableSize int64) error {
 		return errors.Errorf("Image %s is invalid because it has backing file %s", url.String(), info.BackingFile)
 	}
 
-	if int64(float64(availableSize)*0.8) < info.VirtualSize {
-		return errors.Errorf("Virtual image size %d is larger than available size %d (PVC size %d, reserved overhead %f%%). A larger PVC is required.", info.VirtualSize, int64(0.8*float64(availableSize)), info.VirtualSize, 0.2)
+	if int64(float64(availableSize)*storageOverhead) < info.VirtualSize {
+		return errors.Errorf("Virtual image size %d is larger than available size %d (PVC size %d, reserved overhead %f%%). A larger PVC is required.", info.VirtualSize, int64(storageOverhead*float64(availableSize)), info.VirtualSize, 1-storageOverhead)
 	}
 	return nil
 }
@@ -201,8 +201,8 @@ func ConvertToRawStream(url *url.URL, dest string) error {
 }
 
 // Validate does basic validation of a qemu image
-func Validate(url *url.URL, availableSize int64) error {
-	return qemuIterface.Validate(url, availableSize)
+func Validate(url *url.URL, availableSize int64, storageOverhead float64) error {
+	return qemuIterface.Validate(url, availableSize, storageOverhead)
 }
 
 func reportProgress(line string) {

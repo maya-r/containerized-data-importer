@@ -436,7 +436,8 @@ func newAsyncUploadStreamProcessor(stream io.ReadCloser, dest, imageSize, conten
 	}
 
 	uds := importer.NewAsyncUploadDataSource(stream)
-	processor := importer.NewDataProcessor(uds, dest, common.ImporterVolumePath, common.ScratchDataDir, imageSize)
+	// XXX pass storageOverhead
+	processor := importer.NewDataProcessor(uds, dest, common.ImporterVolumePath, common.ScratchDataDir, imageSize, 0)
 	return processor, processor.ProcessDataWithPause()
 }
 
@@ -446,7 +447,8 @@ func newUploadStreamProcessor(stream io.ReadCloser, dest, imageSize, contentType
 	}
 
 	uds := importer.NewUploadDataSource(stream)
-	processor := importer.NewDataProcessor(uds, dest, common.ImporterVolumePath, common.ScratchDataDir, imageSize)
+	// XXX pass storageOverhead
+	processor := importer.NewDataProcessor(uds, dest, common.ImporterVolumePath, common.ScratchDataDir, imageSize, 0)
 	return processor.ProcessData()
 }
 

@@ -88,8 +88,8 @@ type ImportReconciler struct {
 }
 
 type importPodEnvVar struct {
-	ep, secretName, source, contentType, imageSize, certConfigMap, diskID string
-	insecureTLS                                                           bool
+	ep, secretName, source, contentType, imageSize, certConfigMap, diskID, storageOverhead string
+	insecureTLS                                                                            bool
 }
 
 // NewImportController creates a new instance of the import controller.
@@ -392,6 +392,10 @@ func (r *ImportReconciler) createImportEnvVar(pvc *corev1.PersistentVolumeClaim)
 		if err != nil {
 			return nil, err
 		}
+		podEnvVar.storageOverhead, err = r.getStorageOverhead()
+		if err != nil {
+			return nil, err
+		}
 		podEnvVar.insecureTLS, err = r.isInsecureTLS(pvc)
 		if err != nil {
 			return nil, err
@@ -465,6 +469,21 @@ func (r *ImportReconciler) getCertConfigMap(pvc *corev1.PersistentVolumeClaim) (
 	}
 
 	return value, nil
+}
+
+func (r *ImportReconciler) getStorageOverhead() (string, error) {
+	cdiConfig := &cdiv1.CDIConfig{}
+	if err := r.uncachedClient.Get(context.TODO(), types.NamespacedName{Name: common.ConfigName}, cdiConfig); err != nil {
+		if k8serrors.IsNotFound(err) {
+			r.log.V(1).Info("CDIConfig does not exist, pod will not start until it does")
+			return "", nil
+		}
+
+		return "", err
+	}
+
+	// XXX insert validation here
+	return cdiConfig.Status.StorageOverhead, nil
 }
 
 // returns the name of the secret containing endpoint credentials consumed by the importer pod.
