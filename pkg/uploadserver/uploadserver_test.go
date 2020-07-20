@@ -150,12 +150,12 @@ func (amd *AsyncMockDataSource) GetResumePhase() importer.ProcessingPhase {
 	return importer.ProcessingPhaseComplete
 }
 
-func saveAsyncProcessorSuccess(stream io.ReadCloser, dest, imageSize, contentType string) (*importer.DataProcessor, error) {
-	return importer.NewDataProcessor(&AsyncMockDataSource{}, "", "", "", ""), nil
+func saveAsyncProcessorSuccess(stream io.ReadCloser, dest, imageSize, storageOverhead, contentType string) (*importer.DataProcessor, error) {
+	return importer.NewDataProcessor(&AsyncMockDataSource{}, "", "", "", "", ""), nil
 }
 
-func saveAsyncProcessorFailure(stream io.ReadCloser, dest, imageSize, contentType string) (*importer.DataProcessor, error) {
-	return importer.NewDataProcessor(&AsyncMockDataSource{}, "", "", "", ""), fmt.Errorf("Error using datastream")
+func saveAsyncProcessorFailure(stream io.ReadCloser, dest, imageSize, storageOverhead, contentType string) (*importer.DataProcessor, error) {
+	return importer.NewDataProcessor(&AsyncMockDataSource{}, "", "", "", "", ""), fmt.Errorf("Error using datastream")
 }
 
 func withAsyncProcessorSuccess(f func()) {

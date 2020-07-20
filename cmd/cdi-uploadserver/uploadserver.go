@@ -58,6 +58,7 @@ func main() {
 		os.Getenv("CLIENT_CERT"),
 		os.Getenv("CLIENT_NAME"),
 		os.Getenv(common.UploadImageSize),
+		os.Getenv(common.StorageOverheadVar),
 	)
 
 	klog.Infof("Upload destination: %s", destination)

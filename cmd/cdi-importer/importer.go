@@ -57,6 +57,7 @@ func main() {
 	imageSize, _ := util.ParseEnvVar(common.ImporterImageSize, false)
 	certDir, _ := util.ParseEnvVar(common.ImporterCertDirVar, false)
 	storageOverhead, _ := strconv.ParseFloat(os.Getenv(common.StorageOverheadVar), 64)
+	fmt.Printf("storageOverhead is %f (as env: %s)", storageOverhead, os.Getenv(common.StorageOverheadVar))
 	insecureTLS, _ := strconv.ParseBool(os.Getenv(common.InsecureTLSVar))
 	diskID, _ := util.ParseEnvVar(common.ImporterDiskID, false)
 

@@ -181,6 +181,7 @@ func (o *qemuOperations) Validate(url *url.URL, availableSize int64, storageOver
 		return err
 	}
 
+	fmt.Printf("storageOverhead is: %f", storageOverhead)
 	if !isSupportedFormat(info.Format) {
 		return errors.Errorf("Invalid format %s for image %s", info.Format, url.String())
 	}
