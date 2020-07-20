@@ -106,7 +106,7 @@ type uploadServerApp struct {
 	keyFile     string
 	certFile    string
 	imageSize   string
-	storageOverhead string
+	storageOverhead float64
 	mux         *http.ServeMux
 	uploading   bool
 	processing  bool
@@ -151,7 +151,7 @@ func formReadCloser(r *http.Request) (io.ReadCloser, error) {
 }
 
 // NewUploadServer returns a new instance of uploadServerApp
-func NewUploadServer(bindAddress string, bindPort int, destination, tlsKey, tlsCert, clientCert, clientName, imageSize string, storageOverhead string) UploadServer {
+func NewUploadServer(bindAddress string, bindPort int, destination, tlsKey, tlsCert, clientCert, clientName, imageSize string, storageOverhead float64) UploadServer {
 	server := &uploadServerApp{
 		bindAddress: bindAddress,
 		bindPort:    bindPort,
@@ -432,7 +432,7 @@ func (app *uploadServerApp) uploadHandler(irc imageReadCloser) http.HandlerFunc 
 	}
 }
 
-func newAsyncUploadStreamProcessor(stream io.ReadCloser, dest, imageSize, storageOverhead, contentType string) (*importer.DataProcessor, error) {
+func newAsyncUploadStreamProcessor(stream io.ReadCloser, dest, imageSize string, storageOverhead float64, contentType string) (*importer.DataProcessor, error) {
 	if contentType == FilesystemCloneContentType {
 		return nil, fmt.Errorf("async filesystem clone not supported")
 	}
@@ -443,7 +443,7 @@ func newAsyncUploadStreamProcessor(stream io.ReadCloser, dest, imageSize, storag
 	return processor, processor.ProcessDataWithPause()
 }
 
-func newUploadStreamProcessor(stream io.ReadCloser, dest, imageSize, storageOverhead, contentType string) error {
+func newUploadStreamProcessor(stream io.ReadCloser, dest, imageSize string, storageOverhead float64, contentType string) error {
 	if contentType == FilesystemCloneContentType {
 		return filesystemCloneProcessor(stream, common.ImporterVolumePath)
 	}
