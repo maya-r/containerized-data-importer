@@ -96,24 +96,24 @@ type UploadServer interface {
 }
 
 type uploadServerApp struct {
-	bindAddress string
-	bindPort    int
-	destination string
-	tlsKey      string
-	tlsCert     string
-	clientCert  string
-	clientName  string
-	keyFile     string
-	certFile    string
-	imageSize   string
+	bindAddress     string
+	bindPort        int
+	destination     string
+	tlsKey          string
+	tlsCert         string
+	clientCert      string
+	clientName      string
+	keyFile         string
+	certFile        string
+	imageSize       string
 	storageOverhead float64
-	mux         *http.ServeMux
-	uploading   bool
-	processing  bool
-	done        bool
-	doneChan    chan struct{}
-	errChan     chan error
-	mutex       sync.Mutex
+	mux             *http.ServeMux
+	uploading       bool
+	processing      bool
+	done            bool
+	doneChan        chan struct{}
+	errChan         chan error
+	mutex           sync.Mutex
 }
 
 type imageReadCloser func(*http.Request) (io.ReadCloser, error)
@@ -153,20 +153,20 @@ func formReadCloser(r *http.Request) (io.ReadCloser, error) {
 // NewUploadServer returns a new instance of uploadServerApp
 func NewUploadServer(bindAddress string, bindPort int, destination, tlsKey, tlsCert, clientCert, clientName, imageSize string, storageOverhead float64) UploadServer {
 	server := &uploadServerApp{
-		bindAddress: bindAddress,
-		bindPort:    bindPort,
-		destination: destination,
-		tlsKey:      tlsKey,
-		tlsCert:     tlsCert,
-		clientCert:  clientCert,
-		clientName:  clientName,
+		bindAddress:     bindAddress,
+		bindPort:        bindPort,
+		destination:     destination,
+		tlsKey:          tlsKey,
+		tlsCert:         tlsCert,
+		clientCert:      clientCert,
+		clientName:      clientName,
 		storageOverhead: storageOverhead,
-		imageSize:   imageSize,
-		mux:         http.NewServeMux(),
-		uploading:   false,
-		done:        false,
-		doneChan:    make(chan struct{}),
-		errChan:     make(chan error),
+		imageSize:       imageSize,
+		mux:             http.NewServeMux(),
+		uploading:       false,
+		done:            false,
+		doneChan:        make(chan struct{}),
+		errChan:         make(chan error),
 	}
 
 	for _, path := range syncUploadPaths {

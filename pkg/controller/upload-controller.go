@@ -30,11 +30,11 @@ import (
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
-	cdiv1 "kubevirt.io/containerized-data-importer/pkg/apis/core/v1beta1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/client-go/tools/record"
+	cdiv1 "kubevirt.io/containerized-data-importer/pkg/apis/core/v1beta1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
@@ -261,18 +261,18 @@ func (r *UploadReconciler) updatePVC(pvc *corev1.PersistentVolumeClaim) error {
 }
 
 func (r *UploadReconciler) getStorageOverhead() (string, error) {
-       cdiConfig := &cdiv1.CDIConfig{}
-       if err := r.client.Get(context.TODO(), types.NamespacedName{Name: common.ConfigName}, cdiConfig); err != nil {
-               if k8serrors.IsNotFound(err) {
-                       r.log.V(1).Info("CDIConfig does not exist, pod will not start until it does")
-                       return "", nil
-               }
+	cdiConfig := &cdiv1.CDIConfig{}
+	if err := r.client.Get(context.TODO(), types.NamespacedName{Name: common.ConfigName}, cdiConfig); err != nil {
+		if k8serrors.IsNotFound(err) {
+			r.log.V(1).Info("CDIConfig does not exist, pod will not start until it does")
+			return "", nil
+		}
 
-               return "", err
-       }
+		return "", err
+	}
 
-       // XXX insert validation here
-       return cdiConfig.Status.StorageOverhead, nil
+	// XXX insert validation here
+	return cdiConfig.Status.StorageOverhead, nil
 }
 
 func (r *UploadReconciler) getCloneRequestSourcePVC(targetPvc *corev1.PersistentVolumeClaim) (*corev1.PersistentVolumeClaim, error) {
@@ -359,14 +359,14 @@ func (r *UploadReconciler) createUploadPodForPvc(pvc *v1.PersistentVolumeClaim, 
 	}
 
 	args := UploadPodArgs{
-		Name:           podName,
-		PVC:            pvc,
-		ScratchPVCName: scratchPVCName,
-		ClientName:     clientName,
+		Name:            podName,
+		PVC:             pvc,
+		ScratchPVCName:  scratchPVCName,
+		ClientName:      clientName,
 		StorageOverhead: storageOverhead,
-		ServerCert:     serverCert,
-		ServerKey:      serverKey,
-		ClientCA:       clientCA,
+		ServerCert:      serverCert,
+		ServerKey:       serverKey,
+		ClientCA:        clientCA,
 	}
 
 	r.log.V(3).Info("Creating upload pod")
@@ -671,6 +671,10 @@ func (r *UploadReconciler) makeUploadPodSpec(args UploadPodArgs, resourceRequire
 						{
 							Name:  "CLIENT_CERT",
 							Value: string(args.ClientCA),
+						},
+						{
+							Name:  common.StorageOverheadVar,
+							Value: args.StorageOverhead,
 						},
 						{
 							Name:  common.UploadImageSize,

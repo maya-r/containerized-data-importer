@@ -311,7 +311,7 @@ type CDIConfigSpec struct {
 	ScratchSpaceStorageClass *string                      `json:"scratchSpaceStorageClass,omitempty"`
 	PodResourceRequirements  *corev1.ResourceRequirements `json:"podResourceRequirements,omitempty"`
 	FeatureGates             []string                     `json:"featureGates,omitempty"`
-	StorageOverhead	         *string                      `json:"storageOverhead,omitempty"`
+	StorageOverhead          *string                      `json:"storageOverhead,omitempty"`
 }
 
 //CDIConfigStatus provides

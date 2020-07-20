@@ -207,7 +207,7 @@ var _ = Describe("Validate", func() {
 
 	table.DescribeTable("Validate should", func(execfunc execFunctionType, errString string, image *url.URL) {
 		replaceExecFunction(execfunc, func() {
-			err := Validate(image, 42949672960)
+			err := Validate(image, 42949672960, 1.0)
 
 			if errString == "" {
 				Expect(err).NotTo(HaveOccurred())
@@ -226,7 +226,7 @@ var _ = Describe("Validate", func() {
 		table.Entry("should return error on bad json", mockExecFunction(badValidateJSON, "", expectedLimits), "unexpected end of JSON input", imageName),
 		table.Entry("should return error on bad format", mockExecFunction(badFormatValidateJSON, "", expectedLimits), fmt.Sprintf("Invalid format raw2 for image %s", imageName), imageName),
 		table.Entry("should return error on invalid backing file", mockExecFunction(backingFileValidateJSON, "", expectedLimits), fmt.Sprintf("Image %s is invalid because it has backing file backing-file.qcow2", imageName), imageName),
-		table.Entry("should return error when PVC is too small", mockExecFunction(hugeValidateJSON, "", expectedLimits), fmt.Sprintf("Virtual image size %d is larger than available size %d. A larger PVC is required.", 52949672960, 42949672960), imageName),
+		table.Entry("should return error when PVC is too small", mockExecFunction(hugeValidateJSON, "", expectedLimits), fmt.Sprintf("Virtual image size %d is larger than available size %d (PVC size %d, reserved overhead %f%%). A larger PVC is required.", 52949672960, 42949672960, 52949672960, 0.0), imageName),
 	)
 
 })

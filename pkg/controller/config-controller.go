@@ -230,7 +230,6 @@ func (r *CDIConfigReconciler) reconcileStorageOverhead(config *cdiv1.CDIConfig) 
 	return nil
 }
 
-
 // createCDIConfig creates a new instance of the CDIConfig object if it doesn't exist already, and returns the existing one if found.
 // It also sets the operator to be the owner of the CDIConfig object.
 func (r *CDIConfigReconciler) createCDIConfig() (*cdiv1.CDIConfig, error) {

@@ -811,12 +811,12 @@ func makeImportEnv(podEnvVar *importPodEnvVar, uid types.UID) []corev1.EnvVar {
 			Value: podEnvVar.imageSize,
 		},
 		{
-			Name:  common.StorageOverheadVar,
-			Value: podEnvVar.storageOverhead,
-		},
-		{
 			Name:  common.OwnerUID,
 			Value: string(uid),
+		},
+		{
+			Name:  common.StorageOverheadVar,
+			Value: podEnvVar.storageOverhead,
 		},
 		{
 			Name:  common.InsecureTLSVar,
