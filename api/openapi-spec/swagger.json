@@ -3173,6 +3173,9 @@
      "scratchSpaceStorageClass": {
       "type": "string"
      },
+     "storageOverhead": {
+      "type": "string"
+     },
      "uploadProxyURLOverride": {
       "type": "string"
      }
@@ -3187,6 +3190,9 @@
       "$ref": "#/definitions/v1.ResourceRequirements"
      },
      "scratchSpaceStorageClass": {
+      "type": "string"
+     },
+     "storageOverhead": {
       "type": "string"
      },
      "uploadProxyURL": {

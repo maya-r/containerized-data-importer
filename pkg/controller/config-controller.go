@@ -76,6 +76,10 @@ func (r *CDIConfigReconciler) Reconcile(req reconcile.Request) (reconcile.Result
 		return reconcile.Result{}, err
 	}
 
+	if err := r.reconcileStorageOverhead(config); err != nil {
+		return reconcile.Result{}, err
+	}
+
 	if !reflect.DeepEqual(currentConfigCopy, config) {
 		// Updates have happened, update CDIConfig.
 		log.Info("Updating CDIConfig", "CDIConfig.Name", config.Name, "config", config)
@@ -210,6 +214,22 @@ func (r *CDIConfigReconciler) reconcileDefaultPodResourceRequirements(config *cd
 
 	return nil
 }
+
+func (r *CDIConfigReconciler) reconcileStorageOverhead(config *cdiv1.CDIConfig) error {
+	log := r.log.WithName("CDIconfig").WithName("StorageOverhead")
+
+	// Check config for storage overhead
+	if config.Spec.StorageOverhead != nil {
+		log.Info("Setting storage overhead to override", "StorageOverhead", config.Spec.StorageOverhead)
+		config.Status.StorageOverhead = config.Spec.StorageOverhead
+		return nil
+	}
+
+	log.Info("No storage overhead found, setting storage overhead to hard-coded default")
+	config.Status.StorageOverhead = "0.8"
+	return nil
+}
+
 
 // createCDIConfig creates a new instance of the CDIConfig object if it doesn't exist already, and returns the existing one if found.
 // It also sets the operator to be the owner of the CDIConfig object.

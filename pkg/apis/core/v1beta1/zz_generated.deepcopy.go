@@ -138,6 +138,11 @@ func (in *CDIConfigSpec) DeepCopyInto(out *CDIConfigSpec) {
 		*out = make([]string, len(*in))
 		copy(*out, *in)
 	}
+	if in.StorageOverhead != nil {
+		in, out := &in.StorageOverhead, &out.StorageOverhead
+		*out = new(string)
+		**out = **in
+	}
 	return
 }
 
@@ -163,6 +168,11 @@ func (in *CDIConfigStatus) DeepCopyInto(out *CDIConfigStatus) {
 		in, out := &in.DefaultPodResourceRequirements, &out.DefaultPodResourceRequirements
 		*out = new(v1.ResourceRequirements)
 		(*in).DeepCopyInto(*out)
+	}
+	if in.StorageOverhead != nil {
+		in, out := &in.StorageOverhead, &out.StorageOverhead
+		*out = new(string)
+		**out = **in
 	}
 	return
 }
