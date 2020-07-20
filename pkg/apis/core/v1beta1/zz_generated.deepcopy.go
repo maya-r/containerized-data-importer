@@ -169,11 +169,6 @@ func (in *CDIConfigStatus) DeepCopyInto(out *CDIConfigStatus) {
 		*out = new(v1.ResourceRequirements)
 		(*in).DeepCopyInto(*out)
 	}
-	if in.StorageOverhead != nil {
-		in, out := &in.StorageOverhead, &out.StorageOverhead
-		*out = new(string)
-		**out = **in
-	}
 	return
 }
 

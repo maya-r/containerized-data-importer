@@ -221,7 +221,7 @@ func (r *CDIConfigReconciler) reconcileStorageOverhead(config *cdiv1.CDIConfig) 
 	// Check config for storage overhead
 	if config.Spec.StorageOverhead != nil {
 		log.Info("Setting storage overhead to override", "StorageOverhead", config.Spec.StorageOverhead)
-		config.Status.StorageOverhead = config.Spec.StorageOverhead
+		config.Status.StorageOverhead = *config.Spec.StorageOverhead
 		return nil
 	}
 
