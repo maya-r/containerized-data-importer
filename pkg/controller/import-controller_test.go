@@ -430,15 +430,15 @@ var _ = Describe("Create Importer Pod", func() {
 	table.DescribeTable("should", func(pvc *corev1.PersistentVolumeClaim, scratchPvcName *string) {
 		reconciler := createImportReconciler(pvc)
 		podEnvVar := &importPodEnvVar{
-			ep:            "",
-			secretName:    "",
-			source:        "",
-			contentType:   "",
-			imageSize:     "1G",
-			certConfigMap: "",
-			diskID:        "",
-			storageOverhead: "0.8",
-			insecureTLS:   false,
+			ep:                 "",
+			secretName:         "",
+			source:             "",
+			contentType:        "",
+			imageSize:          "1G",
+			certConfigMap:      "",
+			diskID:             "",
+			filesystemOverhead: "0.055",
+			insecureTLS:        false,
 		}
 		pod, err := createImporterPod(reconciler.log, reconciler.client, testImage, "5", testPullPolicy, podEnvVar, pvc, scratchPvcName)
 		Expect(err).ToNot(HaveOccurred())
@@ -482,7 +482,7 @@ var _ = Describe("Import test env", func() {
 	const mockUID = "1111-1111-1111-1111"
 
 	It("Should create import env", func() {
-		testEnvVar := &importPodEnvVar{"myendpoint", "mysecret", SourceHTTP, string(cdiv1.DataVolumeKubeVirt), "1G", "", "", "0.8", false}
+		testEnvVar := &importPodEnvVar{"myendpoint", "mysecret", SourceHTTP, string(cdiv1.DataVolumeKubeVirt), "1G", "", "", "0.055", false}
 		Expect(reflect.DeepEqual(makeImportEnv(testEnvVar, mockUID), createImportTestEnv(testEnvVar, mockUID))).To(BeTrue())
 	})
 })
@@ -689,8 +689,8 @@ func createImportTestEnv(podEnvVar *importPodEnvVar, uid string) []corev1.EnvVar
 			Value: string(uid),
 		},
 		{
-			Name:  common.StorageOverheadVar,
-			Value: podEnvVar.storageOverhead,
+			Name:  common.FilesystemOverheadVar,
+			Value: podEnvVar.filesystemOverhead,
 		},
 		{
 			Name:  common.InsecureTLSVar,

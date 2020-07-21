@@ -88,8 +88,8 @@ type ImportReconciler struct {
 }
 
 type importPodEnvVar struct {
-	ep, secretName, source, contentType, imageSize, certConfigMap, diskID, storageOverhead string
-	insecureTLS                                                                            bool
+	ep, secretName, source, contentType, imageSize, certConfigMap, diskID, filesystemOverhead string
+	insecureTLS                                                                               bool
 }
 
 // NewImportController creates a new instance of the import controller.
@@ -392,7 +392,7 @@ func (r *ImportReconciler) createImportEnvVar(pvc *corev1.PersistentVolumeClaim)
 		if err != nil {
 			return nil, err
 		}
-		podEnvVar.storageOverhead, err = r.getStorageOverhead()
+		podEnvVar.filesystemOverhead, err = r.getFilesystemOverhead()
 		if err != nil {
 			return nil, err
 		}
@@ -471,7 +471,7 @@ func (r *ImportReconciler) getCertConfigMap(pvc *corev1.PersistentVolumeClaim) (
 	return value, nil
 }
 
-func (r *ImportReconciler) getStorageOverhead() (string, error) {
+func (r *ImportReconciler) getFilesystemOverhead() (string, error) {
 	cdiConfig := &cdiv1.CDIConfig{}
 	if err := r.uncachedClient.Get(context.TODO(), types.NamespacedName{Name: common.ConfigName}, cdiConfig); err != nil {
 		if k8serrors.IsNotFound(err) {
@@ -483,7 +483,7 @@ func (r *ImportReconciler) getStorageOverhead() (string, error) {
 	}
 
 	// XXX insert validation here
-	return cdiConfig.Status.StorageOverhead, nil
+	return cdiConfig.Status.FilesystemOverhead, nil
 }
 
 // returns the name of the secret containing endpoint credentials consumed by the importer pod.
@@ -815,8 +815,8 @@ func makeImportEnv(podEnvVar *importPodEnvVar, uid types.UID) []corev1.EnvVar {
 			Value: string(uid),
 		},
 		{
-			Name:  common.StorageOverheadVar,
-			Value: podEnvVar.storageOverhead,
+			Name:  common.FilesystemOverheadVar,
+			Value: podEnvVar.filesystemOverhead,
 		},
 		{
 			Name:  common.InsecureTLSVar,

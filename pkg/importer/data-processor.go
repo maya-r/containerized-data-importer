@@ -116,19 +116,19 @@ type DataProcessor struct {
 	// available space is the available space before downloading the image
 	availableSpace int64
 	// storage overhead is the amount of overhead of the storage used
-	storageOverhead float64
+	filesystemOverhead float64
 }
 
 // NewDataProcessor create a new instance of a data processor using the passed in data provider.
-func NewDataProcessor(dataSource DataSourceInterface, dataFile, dataDir, scratchDataDir, requestImageSize string, storageOverhead float64) *DataProcessor {
+func NewDataProcessor(dataSource DataSourceInterface, dataFile, dataDir, scratchDataDir, requestImageSize string, filesystemOverhead float64) *DataProcessor {
 	dp := &DataProcessor{
-		currentPhase:     ProcessingPhaseInfo,
-		source:           dataSource,
-		dataFile:         dataFile,
-		dataDir:          dataDir,
-		scratchDataDir:   scratchDataDir,
-		requestImageSize: requestImageSize,
-		storageOverhead:  storageOverhead,
+		currentPhase:       ProcessingPhaseInfo,
+		source:             dataSource,
+		dataFile:           dataFile,
+		dataDir:            dataDir,
+		scratchDataDir:     scratchDataDir,
+		requestImageSize:   requestImageSize,
+		filesystemOverhead: filesystemOverhead,
 	}
 	// Calculate available space before doing anything.
 	dp.availableSpace = dp.calculateTargetSize()
@@ -230,7 +230,7 @@ func (dp *DataProcessor) ProcessDataWithPause() error {
 
 func (dp *DataProcessor) validate(url *url.URL) error {
 	klog.V(1).Infoln("Validating image")
-	err := qemuOperations.Validate(url, dp.availableSpace, dp.storageOverhead)
+	err := qemuOperations.Validate(url, dp.availableSpace, dp.filesystemOverhead)
 	if err != nil {
 		return ValidationSizeError{err: err}
 	}

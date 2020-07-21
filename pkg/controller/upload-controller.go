@@ -91,7 +91,7 @@ type UploadPodArgs struct {
 	PVC                             *v1.PersistentVolumeClaim
 	ScratchPVCName                  string
 	ClientName                      string
-	StorageOverhead                 string
+	FilesystemOverhead              string
 	ServerCert, ServerKey, ClientCA []byte
 }
 
@@ -260,7 +260,7 @@ func (r *UploadReconciler) updatePVC(pvc *corev1.PersistentVolumeClaim) error {
 	return nil
 }
 
-func (r *UploadReconciler) getStorageOverhead() (string, error) {
+func (r *UploadReconciler) getFilesystemOverhead() (string, error) {
 	cdiConfig := &cdiv1.CDIConfig{}
 	if err := r.client.Get(context.TODO(), types.NamespacedName{Name: common.ConfigName}, cdiConfig); err != nil {
 		if k8serrors.IsNotFound(err) {
@@ -272,7 +272,7 @@ func (r *UploadReconciler) getStorageOverhead() (string, error) {
 	}
 
 	// XXX insert validation here
-	return cdiConfig.Status.StorageOverhead, nil
+	return cdiConfig.Status.FilesystemOverhead, nil
 }
 
 func (r *UploadReconciler) getCloneRequestSourcePVC(targetPvc *corev1.PersistentVolumeClaim) (*corev1.PersistentVolumeClaim, error) {
@@ -353,20 +353,20 @@ func (r *UploadReconciler) createUploadPodForPvc(pvc *v1.PersistentVolumeClaim, 
 		return nil, err
 	}
 
-	storageOverhead, err := r.getStorageOverhead()
+	filesystemOverhead, err := r.getFilesystemOverhead()
 	if err != nil {
 		return nil, err
 	}
 
 	args := UploadPodArgs{
-		Name:            podName,
-		PVC:             pvc,
-		ScratchPVCName:  scratchPVCName,
-		ClientName:      clientName,
-		StorageOverhead: storageOverhead,
-		ServerCert:      serverCert,
-		ServerKey:       serverKey,
-		ClientCA:        clientCA,
+		Name:               podName,
+		PVC:                pvc,
+		ScratchPVCName:     scratchPVCName,
+		ClientName:         clientName,
+		FilesystemOverhead: filesystemOverhead,
+		ServerCert:         serverCert,
+		ServerKey:          serverKey,
+		ClientCA:           clientCA,
 	}
 
 	r.log.V(3).Info("Creating upload pod")
@@ -673,8 +673,8 @@ func (r *UploadReconciler) makeUploadPodSpec(args UploadPodArgs, resourceRequire
 							Value: string(args.ClientCA),
 						},
 						{
-							Name:  common.StorageOverheadVar,
-							Value: args.StorageOverhead,
+							Name:  common.FilesystemOverheadVar,
+							Value: args.FilesystemOverhead,
 						},
 						{
 							Name:  common.UploadImageSize,

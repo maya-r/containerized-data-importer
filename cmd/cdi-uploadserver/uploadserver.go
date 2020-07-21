@@ -49,7 +49,7 @@ func main() {
 
 	destination := getDestination()
 
-	storageOverhead, _ := strconv.ParseFloat(os.Getenv(common.StorageOverheadVar), 64)
+	filesystemOverhead, _ := strconv.ParseFloat(os.Getenv(common.FilesystemOverheadVar), 64)
 
 	server := uploadserver.NewUploadServer(
 		listenAddress,
@@ -60,7 +60,7 @@ func main() {
 		os.Getenv("CLIENT_CERT"),
 		os.Getenv("CLIENT_NAME"),
 		os.Getenv(common.UploadImageSize),
-		storageOverhead,
+		filesystemOverhead,
 	)
 
 	klog.Infof("Upload destination: %s", destination)

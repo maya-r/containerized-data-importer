@@ -138,8 +138,8 @@ func (in *CDIConfigSpec) DeepCopyInto(out *CDIConfigSpec) {
 		*out = make([]string, len(*in))
 		copy(*out, *in)
 	}
-	if in.StorageOverhead != nil {
-		in, out := &in.StorageOverhead, &out.StorageOverhead
+	if in.FilesystemOverhead != nil {
+		in, out := &in.FilesystemOverhead, &out.FilesystemOverhead
 		*out = new(string)
 		**out = **in
 	}

@@ -56,8 +56,7 @@ func main() {
 	contentType, _ := util.ParseEnvVar(common.ImporterContentType, false)
 	imageSize, _ := util.ParseEnvVar(common.ImporterImageSize, false)
 	certDir, _ := util.ParseEnvVar(common.ImporterCertDirVar, false)
-	storageOverhead, _ := strconv.ParseFloat(os.Getenv(common.StorageOverheadVar), 64)
-	fmt.Printf("storageOverhead is %f (as env: %s)", storageOverhead, os.Getenv(common.StorageOverheadVar))
+	filesystemOverhead, _ := strconv.ParseFloat(os.Getenv(common.FilesystemOverheadVar), 64)
 	insecureTLS, _ := strconv.ParseBool(os.Getenv(common.InsecureTLSVar))
 	diskID, _ := util.ParseEnvVar(common.ImporterDiskID, false)
 
@@ -155,7 +154,7 @@ func main() {
 			os.Exit(1)
 		}
 		defer dp.Close()
-		processor := importer.NewDataProcessor(dp, dest, dataDir, common.ScratchDataDir, imageSize, storageOverhead)
+		processor := importer.NewDataProcessor(dp, dest, dataDir, common.ScratchDataDir, imageSize, filesystemOverhead)
 		err = processor.ProcessData()
 		if err != nil {
 			klog.Errorf("%+v", err)

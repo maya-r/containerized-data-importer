@@ -207,7 +207,7 @@ var _ = Describe("Validate", func() {
 
 	table.DescribeTable("Validate should", func(execfunc execFunctionType, errString string, image *url.URL) {
 		replaceExecFunction(execfunc, func() {
-			err := Validate(image, 42949672960, 1.0)
+			err := Validate(image, 42949672960, 0.0)
 
 			if errString == "" {
 				Expect(err).NotTo(HaveOccurred())

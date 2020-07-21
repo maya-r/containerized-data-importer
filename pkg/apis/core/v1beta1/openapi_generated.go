@@ -13567,7 +13567,7 @@ func schema_pkg_apis_core_v1beta1_CDIConfigSpec(ref common.ReferenceCallback) co
 							},
 						},
 					},
-					"storageOverhead": {
+					"filesystemOverhead": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"string"},
 							Format: "",
@@ -13605,7 +13605,7 @@ func schema_pkg_apis_core_v1beta1_CDIConfigStatus(ref common.ReferenceCallback) 
 							Ref: ref("k8s.io/api/core/v1.ResourceRequirements"),
 						},
 					},
-					"storageOverhead": {
+					"filesystemOverhead": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"string"},
 							Format: "",

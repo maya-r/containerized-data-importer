@@ -42,7 +42,7 @@ import (
 )
 
 func newServer() *uploadServerApp {
-	server := NewUploadServer("127.0.0.1", 0, "disk.img", "", "", "", "", "", 0.8)
+	server := NewUploadServer("127.0.0.1", 0, "disk.img", "", "", "", "", "", 0.055)
 	return server.(*uploadServerApp)
 }
 
@@ -60,7 +60,7 @@ func newTLSServer(clientCertName, expectedName string) (*uploadServerApp, *tripl
 	tlsCert := string(cert.EncodeCertPEM(serverKeyPair.Cert))
 	clientCert := string(cert.EncodeCertPEM(clientCA.Cert))
 
-	server := NewUploadServer("127.0.0.1", 0, "disk.img", tlsKey, tlsCert, clientCert, expectedName, "", 0.8).(*uploadServerApp)
+	server := NewUploadServer("127.0.0.1", 0, "disk.img", tlsKey, tlsCert, clientCert, expectedName, "", 0.055).(*uploadServerApp)
 
 	clientKeyPair, err := triple.NewClientKeyPair(clientCA, clientCertName, []string{})
 	Expect(err).ToNot(HaveOccurred())
@@ -87,11 +87,11 @@ func newHTTPClient(clientKeyPair *triple.KeyPair, serverCACert *x509.Certificate
 	return client
 }
 
-func saveProcessorSuccess(stream io.ReadCloser, dest, imageSize string, storageOverhead float64, contentType string) error {
+func saveProcessorSuccess(stream io.ReadCloser, dest, imageSize string, filesystemOverhead float64, contentType string) error {
 	return nil
 }
 
-func saveProcessorFailure(stream io.ReadCloser, dest, imageSize string, storageOverhead float64, contentType string) error {
+func saveProcessorFailure(stream io.ReadCloser, dest, imageSize string, filesystemOverhead float64, contentType string) error {
 	return fmt.Errorf("Error using datastream")
 }
 
@@ -150,12 +150,12 @@ func (amd *AsyncMockDataSource) GetResumePhase() importer.ProcessingPhase {
 	return importer.ProcessingPhaseComplete
 }
 
-func saveAsyncProcessorSuccess(stream io.ReadCloser, dest, imageSize string, storageOverhead float64, contentType string) (*importer.DataProcessor, error) {
-	return importer.NewDataProcessor(&AsyncMockDataSource{}, "", "", "", "", 0.8), nil
+func saveAsyncProcessorSuccess(stream io.ReadCloser, dest, imageSize string, filesystemOverhead float64, contentType string) (*importer.DataProcessor, error) {
+	return importer.NewDataProcessor(&AsyncMockDataSource{}, "", "", "", "", 0.055), nil
 }
 
-func saveAsyncProcessorFailure(stream io.ReadCloser, dest, imageSize string, storageOverhead float64, contentType string) (*importer.DataProcessor, error) {
-	return importer.NewDataProcessor(&AsyncMockDataSource{}, "", "", "", "", 0.8), fmt.Errorf("Error using datastream")
+func saveAsyncProcessorFailure(stream io.ReadCloser, dest, imageSize string, filesystemOverhead float64, contentType string) (*importer.DataProcessor, error) {
+	return importer.NewDataProcessor(&AsyncMockDataSource{}, "", "", "", "", 0.055), fmt.Errorf("Error using datastream")
 }
 
 func withAsyncProcessorSuccess(f func()) {

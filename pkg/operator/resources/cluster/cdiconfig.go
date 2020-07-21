@@ -73,6 +73,10 @@ func createCDIConfigCRD() *extv1beta1.CustomResourceDefinition {
 										},
 									},
 								},
+								"filesystemOverhead": {
+									Description: "Override the space reserved for filesystem overhead. A value is between 0 and 1, if not defined it is 0.055 (5.5% overhead",
+									Type:        "string",
+								},
 							},
 						},
 						"status": {
@@ -100,6 +104,10 @@ func createCDIConfigCRD() *extv1beta1.CustomResourceDefinition {
 											Type:        "object",
 										},
 									},
+								},
+								"filesystemOverhead": {
+									Description: "The calculated amount that should be reserved for file system overhead",
+									Type:        "string",
 								},
 							},
 						},
