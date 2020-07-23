@@ -272,7 +272,7 @@ func (r *UploadReconciler) getFilesystemOverhead() (string, error) {
 	}
 
 	// XXX insert validation here
-	return cdiConfig.Status.FilesystemOverhead, nil
+	return cdiConfig.Status.FilesystemOverhead.Global, nil
 }
 
 func (r *UploadReconciler) getCloneRequestSourcePVC(targetPvc *corev1.PersistentVolumeClaim) (*corev1.PersistentVolumeClaim, error) {

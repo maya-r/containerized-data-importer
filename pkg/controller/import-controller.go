@@ -483,7 +483,7 @@ func (r *ImportReconciler) getFilesystemOverhead() (string, error) {
 	}
 
 	// XXX insert validation here
-	return cdiConfig.Status.FilesystemOverhead, nil
+	return cdiConfig.Status.FilesystemOverhead.Global, nil
 }
 
 // returns the name of the secret containing endpoint credentials consumed by the importer pod.

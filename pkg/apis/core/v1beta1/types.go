@@ -305,13 +305,20 @@ type CDIConfig struct {
 	Status CDIConfigStatus `json:"status,omitempty"`
 }
 
+//FilesystemOverhead defines the reserved size for PVCs with VolumeMode: Filesystem
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+type FilesystemOverhead struct {
+	global                   *string                      `json:"uploadProxyURL,omitempty"`
+	storageClass             []string                     `json:"uploadProxyURL,omitempty"`
+}
+
 //CDIConfigSpec defines specification for user configuration
 type CDIConfigSpec struct {
 	UploadProxyURLOverride   *string                      `json:"uploadProxyURLOverride,omitempty"`
 	ScratchSpaceStorageClass *string                      `json:"scratchSpaceStorageClass,omitempty"`
 	PodResourceRequirements  *corev1.ResourceRequirements `json:"podResourceRequirements,omitempty"`
 	FeatureGates             []string                     `json:"featureGates,omitempty"`
-	FilesystemOverhead       *string                      `json:"filesystemOverhead,omitempty"`
+//	FilesystemOverhead       *filesystemOverhead          `json:"filesystemOverhead,omitempty"`
 }
 
 //CDIConfigStatus provides
@@ -319,7 +326,7 @@ type CDIConfigStatus struct {
 	UploadProxyURL                 *string                      `json:"uploadProxyURL,omitempty"`
 	ScratchSpaceStorageClass       string                       `json:"scratchSpaceStorageClass,omitempty"`
 	DefaultPodResourceRequirements *corev1.ResourceRequirements `json:"defaultPodResourceRequirements,omitempty"`
-	FilesystemOverhead             string                       `json:"filesystemOverhead,omitempty"`
+//	FilesystemOverhead             *filesystemOverhead          `json:"filesystemOverhead,omitempty"`
 }
 
 //CDIConfigList provides the needed parameters to do request a list of CDIConfigs from the system

@@ -218,15 +218,17 @@ func (r *CDIConfigReconciler) reconcileDefaultPodResourceRequirements(config *cd
 func (r *CDIConfigReconciler) reconcileFilesystemOverhead(config *cdiv1.CDIConfig) error {
 	log := r.log.WithName("CDIconfig").WithName("FilesystemOverhead")
 
+	// XXX iterate over storage classes
 	// Check config for storage overhead
-	if config.Spec.FilesystemOverhead != nil {
-		log.Info("Setting filesystem overhead to override", "FilesystemOverhead", config.Spec.FilesystemOverhead)
-		config.Status.FilesystemOverhead = *config.Spec.FilesystemOverhead
+	if config.Spec.FilesystemOverhead.Global != nil {
+		log.Info("Setting filesystem overhead to override", "FilesystemOverhead", config.Spec.FilesystemOverhead.Global)
+		config.Status.FilesystemOverhead.Global = *config.Spec.FilesystemOverhead.Global
 		return nil
 	}
 
+	// XXX remove hard-coded value, define default in schema
 	log.Info("No filesystem overhead found, setting filesystem overhead to hard-coded default")
-	config.Status.FilesystemOverhead = "0.055"
+	config.Status.FilesystemOverhead.Global = "0.055"
 	return nil
 }
 
