@@ -308,6 +308,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"kubevirt.io/containerized-data-importer/pkg/apis/core/v1beta1.DataVolumeSourceUpload":   schema_pkg_apis_core_v1beta1_DataVolumeSourceUpload(ref),
 		"kubevirt.io/containerized-data-importer/pkg/apis/core/v1beta1.DataVolumeSpec":           schema_pkg_apis_core_v1beta1_DataVolumeSpec(ref),
 		"kubevirt.io/containerized-data-importer/pkg/apis/core/v1beta1.DataVolumeStatus":         schema_pkg_apis_core_v1beta1_DataVolumeStatus(ref),
+		"kubevirt.io/containerized-data-importer/pkg/apis/core/v1beta1.FilesystemOverhead":       schema_pkg_apis_core_v1beta1_FilesystemOverhead(ref),
 	}
 }
 
@@ -13569,15 +13570,14 @@ func schema_pkg_apis_core_v1beta1_CDIConfigSpec(ref common.ReferenceCallback) co
 					},
 					"filesystemOverhead": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
+							Ref: ref("kubevirt.io/containerized-data-importer/pkg/apis/core/v1beta1.FilesystemOverhead"),
 						},
 					},
 				},
 			},
 		},
 		Dependencies: []string{
-			"k8s.io/api/core/v1.ResourceRequirements"},
+			"k8s.io/api/core/v1.ResourceRequirements", "kubevirt.io/containerized-data-importer/pkg/apis/core/v1beta1.FilesystemOverhead"},
 	}
 }
 
@@ -13607,15 +13607,14 @@ func schema_pkg_apis_core_v1beta1_CDIConfigStatus(ref common.ReferenceCallback) 
 					},
 					"filesystemOverhead": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
+							Ref: ref("kubevirt.io/containerized-data-importer/pkg/apis/core/v1beta1.FilesystemOverhead"),
 						},
 					},
 				},
 			},
 		},
 		Dependencies: []string{
-			"k8s.io/api/core/v1.ResourceRequirements"},
+			"k8s.io/api/core/v1.ResourceRequirements", "kubevirt.io/containerized-data-importer/pkg/apis/core/v1beta1.FilesystemOverhead"},
 	}
 }
 
@@ -14202,5 +14201,37 @@ func schema_pkg_apis_core_v1beta1_DataVolumeStatus(ref common.ReferenceCallback)
 		},
 		Dependencies: []string{
 			"kubevirt.io/containerized-data-importer/pkg/apis/core/v1beta1.DataVolumeCondition"},
+	}
+}
+
+func schema_pkg_apis_core_v1beta1_FilesystemOverhead(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "FilesystemOverhead defines the reserved size for PVCs with VolumeMode: Filesystem",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"global": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"storageClass": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Type:   []string{"string"},
+										Format: "",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 }

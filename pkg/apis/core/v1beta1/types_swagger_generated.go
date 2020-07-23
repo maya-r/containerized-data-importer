@@ -129,6 +129,12 @@ func (CDIConfig) SwaggerDoc() map[string]string {
 	}
 }
 
+func (FilesystemOverhead) SwaggerDoc() map[string]string {
+	return map[string]string{
+		"": "FilesystemOverhead defines the reserved size for PVCs with VolumeMode: Filesystem",
+	}
+}
+
 func (CDIConfigSpec) SwaggerDoc() map[string]string {
 	return map[string]string{
 		"": "CDIConfigSpec defines specification for user configuration",

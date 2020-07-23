@@ -220,11 +220,11 @@ func (r *CDIConfigReconciler) reconcileFilesystemOverhead(config *cdiv1.CDIConfi
 
 	// XXX iterate over storage classes
 	// Check config for storage overhead
-	if config.Spec.FilesystemOverhead.Global != nil {
-		log.Info("Setting filesystem overhead to override", "FilesystemOverhead", config.Spec.FilesystemOverhead.Global)
-		config.Status.FilesystemOverhead.Global = *config.Spec.FilesystemOverhead.Global
-		return nil
-	}
+	//if config.Spec.FilesystemOverhead.Global != nil {
+	//	log.Info("Setting filesystem overhead to override", "FilesystemOverhead", config.Spec.FilesystemOverhead.Global)
+	//	config.Status.FilesystemOverhead.Global = *config.Spec.FilesystemOverhead.Global
+	//	return nil
+	//}
 
 	// XXX remove hard-coded value, define default in schema
 	log.Info("No filesystem overhead found, setting filesystem overhead to hard-coded default")

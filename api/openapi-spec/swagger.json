@@ -3168,7 +3168,7 @@
       }
      },
      "filesystemOverhead": {
-      "type": "string"
+      "$ref": "#/definitions/v1beta1.FilesystemOverhead"
      },
      "podResourceRequirements": {
       "$ref": "#/definitions/v1.ResourceRequirements"
@@ -3190,7 +3190,7 @@
       "$ref": "#/definitions/v1.ResourceRequirements"
      },
      "filesystemOverhead": {
-      "type": "string"
+      "$ref": "#/definitions/v1beta1.FilesystemOverhead"
      },
      "scratchSpaceStorageClass": {
       "type": "string"
@@ -3519,6 +3519,21 @@
      "restartCount": {
       "type": "integer",
       "format": "int32"
+     }
+    }
+   },
+   "v1beta1.FilesystemOverhead": {
+    "description": "FilesystemOverhead defines the reserved size for PVCs with VolumeMode: Filesystem",
+    "type": "object",
+    "properties": {
+     "global": {
+      "type": "string"
+     },
+     "storageClass": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
      }
     }
    },
