@@ -9,6 +9,7 @@ import (
 	snapshotv1 "github.com/kubernetes-csi/external-snapshotter/v2/pkg/apis/volumesnapshot/v1beta1"
 	"github.com/pkg/errors"
 	v1 "k8s.io/api/core/v1"
+	storagev1 "k8s.io/api/storage/v1"
 	extclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -167,6 +168,36 @@ func CreateScratchPersistentVolumeClaim(client client.Client, pvc *v1.Persistent
 	}
 	klog.V(3).Infof("scratch PVC \"%s/%s\" created\n", scratchPvc.Namespace, scratchPvc.Name)
 	return scratchPvc, nil
+}
+
+// GetPvcStorageClass tries to determine which storage class to use for a persistent
+// volume claim. The order of preference is the following:
+// 1. Defined value in the PVC spec
+// 2. Default storage class
+func GetPvcStorageClassName(client client.Client, pvc *v1.PersistentVolumeClaimSpec) (*string, error) {
+	targetPvcStorageClassName := pvc.StorageClassName
+
+	// Handle unspecified storage class name, fallback to default storage class
+	if targetPvcStorageClassName == nil {
+		storageClasses := &storagev1.StorageClassList{}
+		if err := client.List(context.TODO(), storageClasses); err != nil {
+			klog.V(3).Info("Unable to retrieve available storage classes, falling back to host assisted clone")
+			return nil, errors.New("unable to retrieve storage classes")
+		}
+		for _, storageClass := range storageClasses.Items {
+			if storageClass.Annotations["storageclass.kubernetes.io/is-default-class"] == "true" {
+				targetPvcStorageClassName = &storageClass.Name
+				break
+			}
+		}
+	}
+
+	if targetPvcStorageClassName == nil {
+		klog.V(3).Info("Target PVC's Storage Class not found")
+		return nil, errors.New("Target PVC storage class not found")
+	}
+
+	return targetPvcStorageClassName, nil
 }
 
 // GetScratchPvcStorageClass tries to determine which storage class to use for use with a scratch persistent

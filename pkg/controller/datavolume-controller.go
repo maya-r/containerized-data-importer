@@ -354,26 +354,10 @@ func (r *DatavolumeReconciler) getSnapshotClassForSmartClone(dataVolume *cdiv1.D
 		return "", errors.New("source PVC not found")
 	}
 
-	targetPvcStorageClassName := dataVolume.Spec.PVC.StorageClassName
-
-	// Handle unspecified storage class name, fallback to default storage class
-	if targetPvcStorageClassName == nil {
-		storageClasses := &storagev1.StorageClassList{}
-		if err := r.client.List(context.TODO(), storageClasses); err != nil {
-			r.log.V(3).Info("Unable to retrieve available storage classes, falling back to host assisted clone")
-			return "", errors.New("unable to retrieve storage classes")
-		}
-		for _, storageClass := range storageClasses.Items {
-			if storageClass.Annotations["storageclass.kubernetes.io/is-default-class"] == "true" {
-				targetPvcStorageClassName = &storageClass.Name
-				break
-			}
-		}
-	}
+	targetPvcStorageClassName, err := GetPvcStorageClassName(r.client, dataVolume.Spec.PVC)
 
 	if targetPvcStorageClassName == nil {
-		r.log.V(3).Info("Target PVC's Storage Class not found")
-		return "", errors.New("Target PVC storage class not found")
+		return "", err
 	}
 
 	sourcePvcStorageClassName := pvc.Spec.StorageClassName
