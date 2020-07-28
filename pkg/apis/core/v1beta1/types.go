@@ -305,10 +305,14 @@ type CDIConfig struct {
 	Status CDIConfigStatus `json:"status,omitempty"`
 }
 
+//Percent is a string that can only be a value between [0,1)
+// +kubebuilder:validation:Pattern=`^(0\.[0-9]+|0)$`
+type Percent string
+
 //FilesystemOverhead defines the reserved size for PVCs with VolumeMode: Filesystem
 type FilesystemOverhead struct {
-	Global                   string                       `json:"global,omitempty"`
-	StorageClass             []string                     `json:"storageClass,omitempty"`
+	Global                   Percent                      `json:"global,omitempty"`
+	StorageClass             map[string]Percent           `json:"storageClass,omitempty"`
 }
 
 //CDIConfigSpec defines specification for user configuration

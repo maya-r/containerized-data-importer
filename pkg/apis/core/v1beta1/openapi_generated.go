@@ -14219,8 +14219,9 @@ func schema_pkg_apis_core_v1beta1_FilesystemOverhead(ref common.ReferenceCallbac
 					},
 					"storageClass": {
 						SchemaProps: spec.SchemaProps{
-							Type: []string{"array"},
-							Items: &spec.SchemaOrArray{
+							Type: []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Type:   []string{"string"},

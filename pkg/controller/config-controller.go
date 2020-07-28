@@ -218,17 +218,46 @@ func (r *CDIConfigReconciler) reconcileDefaultPodResourceRequirements(config *cd
 func (r *CDIConfigReconciler) reconcileFilesystemOverhead(config *cdiv1.CDIConfig) error {
 	log := r.log.WithName("CDIconfig").WithName("FilesystemOverhead")
 
-	// XXX iterate over storage classes
-	// Check config for storage overhead
-	//if config.Spec.FilesystemOverhead.Global != nil {
-	//	log.Info("Setting filesystem overhead to override", "FilesystemOverhead", config.Spec.FilesystemOverhead.Global)
-	//	config.Status.FilesystemOverhead.Global = *config.Spec.FilesystemOverhead.Global
-	//	return nil
-	//}
+	// Avoid nil maps and segfaults for the initial case, where filesystemOverhead
+	// is nil for both the spec and the status.
+	if config.Spec.FilesystemOverhead == nil {
+		log.Info("No filesystem overhead found in spec, initializing to defaults")
+		config.Spec.FilesystemOverhead = &cdiv1.FilesystemOverhead{
+			Global: "0.055",
+			StorageClass: make(map[string]cdiv1.Percent),
+		}
+	}
 
-	// XXX remove hard-coded value, define default in schema
-	log.Info("No filesystem overhead found, setting filesystem overhead to hard-coded default")
-	config.Status.FilesystemOverhead.Global = "0.055"
+	if config.Status.FilesystemOverhead == nil {
+		log.Info("No filesystem overhead found in status, initializing to defaults")
+		config.Status.FilesystemOverhead = &cdiv1.FilesystemOverhead{
+			Global: "0.055",
+			StorageClass: make(map[string]cdiv1.Percent),
+		}
+	}
+
+	// We can now freely dereference.
+	perStorageConfig := config.Spec.FilesystemOverhead.StorageClass
+
+	// Set status global overhead
+	config.Status.FilesystemOverhead.Global = config.Spec.FilesystemOverhead.Global
+
+	// Set status per-storageClass overhead
+	storageClassList := &storagev1.StorageClassList{}
+	if err := r.client.List(context.TODO(), storageClassList, &client.ListOptions{}); err != nil {
+		return err
+	}
+
+	for _, storageClass := range storageClassList.Items {
+		storageClassName := storageClass.GetName()
+		storageClassNameOverhead, found := perStorageConfig[storageClassName]
+		if found {
+			config.Status.FilesystemOverhead.StorageClass[storageClassName] = storageClassNameOverhead
+		} else {
+			config.Status.FilesystemOverhead.StorageClass[storageClassName] = config.Status.FilesystemOverhead.Global
+		}
+	}
+
 	return nil
 }
 

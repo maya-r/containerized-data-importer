@@ -74,8 +74,18 @@ func createCDIConfigCRD() *extv1beta1.CustomResourceDefinition {
 									},
 								},
 								"filesystemOverhead": {
-									Description: "Override the space reserved for filesystem overhead. A value is between 0 and 1, if not defined it is 0.055 (5.5% overhead",
-									Type:        "string",
+									Description: "Override the space reserved for filesystem overhead. A value is between 0 and 1, if not defined it is 0.055 (5.5% overhead)",
+									Type:        "object",
+									Properties: map[string]extv1beta1.JSONSchemaProps{
+										"global": {
+											Description: "How much space of a Filesystem volume should be reserved for safety. This value is the global one to be used unless a per-storageClass value is chosen.",
+											Type:        "string",
+										},
+										"storageClass": {
+											Description: "How much space of a Filesystem volume should be reserved for safety. This value is per-storageClass, and can be used to override the global one for a particular storageClass.",
+											Type:        "object",
+										},
+									},
 								},
 							},
 						},
@@ -106,8 +116,18 @@ func createCDIConfigCRD() *extv1beta1.CustomResourceDefinition {
 									},
 								},
 								"filesystemOverhead": {
-									Description: "The calculated amount that should be reserved for file system overhead",
-									Type:        "string",
+									Description: "The calculated overhead to reserve on Filesystem volumes",
+									Type:        "object",
+									Properties: map[string]extv1beta1.JSONSchemaProps{
+										"global": {
+											Description: "The calculated global space of a Filesystem to reserve, unless overridden by a per-storageClass value. By default, this is 0.055 meaning 5.5% of the space is reserved.",
+											Type:        "string",
+										},
+										"storageClass": {
+											Description: "The calculated space of a Filesystem volume that would be reserved for safety. This value is per-storageClass.",
+											Type:        "object",
+										},
+									},
 								},
 							},
 						},

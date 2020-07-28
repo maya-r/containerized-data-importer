@@ -3530,8 +3530,8 @@
       "type": "string"
      },
      "storageClass": {
-      "type": "array",
-      "items": {
+      "type": "object",
+      "additionalProperties": {
        "type": "string"
       }
      }

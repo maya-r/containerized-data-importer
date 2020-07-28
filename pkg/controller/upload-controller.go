@@ -34,7 +34,6 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/client-go/tools/record"
-	cdiv1 "kubevirt.io/containerized-data-importer/pkg/apis/core/v1beta1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
@@ -260,21 +259,6 @@ func (r *UploadReconciler) updatePVC(pvc *corev1.PersistentVolumeClaim) error {
 	return nil
 }
 
-func (r *UploadReconciler) getFilesystemOverhead() (string, error) {
-	cdiConfig := &cdiv1.CDIConfig{}
-	if err := r.client.Get(context.TODO(), types.NamespacedName{Name: common.ConfigName}, cdiConfig); err != nil {
-		if k8serrors.IsNotFound(err) {
-			r.log.V(1).Info("CDIConfig does not exist, pod will not start until it does")
-			return "", nil
-		}
-
-		return "", err
-	}
-
-	// XXX insert validation here
-	return cdiConfig.Status.FilesystemOverhead.Global, nil
-}
-
 func (r *UploadReconciler) getCloneRequestSourcePVC(targetPvc *corev1.PersistentVolumeClaim) (*corev1.PersistentVolumeClaim, error) {
 	sourceVolumeMode := corev1.PersistentVolumeFilesystem
 	targetVolumeMode := corev1.PersistentVolumeFilesystem
@@ -353,7 +337,7 @@ func (r *UploadReconciler) createUploadPodForPvc(pvc *v1.PersistentVolumeClaim, 
 		return nil, err
 	}
 
-	filesystemOverhead, err := r.getFilesystemOverhead()
+	filesystemOverhead, err := GetFilesystemOverhead(r.client, pvc)
 	if err != nil {
 		return nil, err
 	}

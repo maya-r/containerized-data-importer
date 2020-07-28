@@ -556,8 +556,10 @@ func (in *FilesystemOverhead) DeepCopyInto(out *FilesystemOverhead) {
 	*out = *in
 	if in.StorageClass != nil {
 		in, out := &in.StorageClass, &out.StorageClass
-		*out = make([]string, len(*in))
-		copy(*out, *in)
+		*out = make(map[string]Percent, len(*in))
+		for key, val := range *in {
+			(*out)[key] = val
+		}
 	}
 	return
 }

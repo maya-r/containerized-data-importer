@@ -200,6 +200,36 @@ func GetPvcStorageClassName(client client.Client, pvc *v1.PersistentVolumeClaimS
 	return targetPvcStorageClassName, nil
 }
 
+func GetFilesystemOverhead(client client.Client, pvc *v1.PersistentVolumeClaim) (string, error) {
+	if getVolumeMode(pvc) != v1.PersistentVolumeFilesystem {
+		return "0", nil
+	}
+
+	cdiConfig := &cdiv1.CDIConfig{}
+	if err := client.Get(context.TODO(), types.NamespacedName{Name: common.ConfigName}, cdiConfig); err != nil {
+		if k8serrors.IsNotFound(err) {
+			klog.V(1).Info("CDIConfig does not exist, pod will not start until it does")
+			return "0", nil
+		}
+
+		return "0", err
+	}
+
+	targetStorageClassName, err := GetPvcStorageClassName(client, &pvc.Spec)
+	if err != nil {
+		return "0", err
+	}
+
+	perStorageConfig := cdiConfig.Status.FilesystemOverhead.StorageClass
+
+	storageClassOverhead, found := perStorageConfig[*targetStorageClassName]
+	if found {
+		return string(storageClassOverhead), nil
+	}
+
+	return string(cdiConfig.Status.FilesystemOverhead.Global), nil
+}
+
 // GetScratchPvcStorageClass tries to determine which storage class to use for use with a scratch persistent
 // volume claim. The order of preference is the following:
 // 1. Defined value in CDI Config field scratchSpaceStorageClass.
