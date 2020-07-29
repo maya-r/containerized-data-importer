@@ -170,8 +170,8 @@ func CreateScratchPersistentVolumeClaim(client client.Client, pvc *v1.Persistent
 	return scratchPvc, nil
 }
 
-// GetPvcStorageClass tries to determine which storage class to use for a persistent
-// volume claim. The order of preference is the following:
+// GetPvcStorageClassName tries to determine which storage class to use for a
+// persistent volume claim. The order of preference is the following:
 // 1. Defined value in the PVC spec
 // 2. Default storage class
 func GetPvcStorageClassName(client client.Client, pvc *v1.PersistentVolumeClaimSpec) (*string, error) {
@@ -200,6 +200,7 @@ func GetPvcStorageClassName(client client.Client, pvc *v1.PersistentVolumeClaimS
 	return targetPvcStorageClassName, nil
 }
 
+// GetFilesystemOverhead determines the filesystem overhead defined in CDIConfig for this PVC's volumeMode and storageClass.
 func GetFilesystemOverhead(client client.Client, pvc *v1.PersistentVolumeClaim) (string, error) {
 	if getVolumeMode(pvc) != v1.PersistentVolumeFilesystem {
 		return "0", nil

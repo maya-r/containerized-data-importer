@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"reflect"
+	"regexp"
 
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -223,7 +224,7 @@ func (r *CDIConfigReconciler) reconcileFilesystemOverhead(config *cdiv1.CDIConfi
 	if config.Spec.FilesystemOverhead == nil {
 		log.Info("No filesystem overhead found in spec, initializing to defaults")
 		config.Spec.FilesystemOverhead = &cdiv1.FilesystemOverhead{
-			Global: "0.055",
+			Global:       "0.055",
 			StorageClass: make(map[string]cdiv1.Percent),
 		}
 	}
@@ -231,9 +232,14 @@ func (r *CDIConfigReconciler) reconcileFilesystemOverhead(config *cdiv1.CDIConfi
 	if config.Status.FilesystemOverhead == nil {
 		log.Info("No filesystem overhead found in status, initializing to defaults")
 		config.Status.FilesystemOverhead = &cdiv1.FilesystemOverhead{
-			Global: "0.055",
+			Global:       "0.055",
 			StorageClass: make(map[string]cdiv1.Percent),
 		}
+	}
+
+	valid, err := validOverhead(config.Spec.FilesystemOverhead.Global)
+	if !valid {
+		return err
 	}
 
 	// We can now freely dereference.
@@ -251,7 +257,15 @@ func (r *CDIConfigReconciler) reconcileFilesystemOverhead(config *cdiv1.CDIConfi
 	for _, storageClass := range storageClassList.Items {
 		storageClassName := storageClass.GetName()
 		storageClassNameOverhead, found := perStorageConfig[storageClassName]
+
 		if found {
+			valid, err := validOverhead(storageClassNameOverhead)
+			if !valid {
+				if err == nil {
+					panic("test")
+				}
+				return err
+			}
 			config.Status.FilesystemOverhead.StorageClass[storageClassName] = storageClassNameOverhead
 		} else {
 			config.Status.FilesystemOverhead.StorageClass[storageClassName] = config.Status.FilesystemOverhead.Global
@@ -259,6 +273,10 @@ func (r *CDIConfigReconciler) reconcileFilesystemOverhead(config *cdiv1.CDIConfi
 	}
 
 	return nil
+}
+
+func validOverhead(overhead cdiv1.Percent) (bool, error) {
+	return regexp.MatchString(`^(0\.[0-9]+|0)$`, string(overhead))
 }
 
 // createCDIConfig creates a new instance of the CDIConfig object if it doesn't exist already, and returns the existing one if found.
