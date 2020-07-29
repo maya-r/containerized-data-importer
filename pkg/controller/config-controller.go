@@ -217,36 +217,35 @@ func (r *CDIConfigReconciler) reconcileDefaultPodResourceRequirements(config *cd
 }
 
 func (r *CDIConfigReconciler) reconcileFilesystemOverhead(config *cdiv1.CDIConfig) error {
+	var globalOverhead cdiv1.Percent = "0.055"
+	var perStorageConfig = make(map[string]cdiv1.Percent)
+
 	log := r.log.WithName("CDIconfig").WithName("FilesystemOverhead")
 
 	// Avoid nil maps and segfaults for the initial case, where filesystemOverhead
 	// is nil for both the spec and the status.
-	if config.Spec.FilesystemOverhead == nil {
-		log.Info("No filesystem overhead found in spec, initializing to defaults")
-		config.Spec.FilesystemOverhead = &cdiv1.FilesystemOverhead{
-			Global:       "0.055",
-			StorageClass: make(map[string]cdiv1.Percent),
-		}
-	}
-
 	if config.Status.FilesystemOverhead == nil {
 		log.Info("No filesystem overhead found in status, initializing to defaults")
 		config.Status.FilesystemOverhead = &cdiv1.FilesystemOverhead{
-			Global:       "0.055",
+			Global:       globalOverhead,
 			StorageClass: make(map[string]cdiv1.Percent),
 		}
 	}
 
-	valid, err := validOverhead(config.Spec.FilesystemOverhead.Global)
+	if config.Spec.FilesystemOverhead != nil {
+		globalOverhead = config.Spec.FilesystemOverhead.Global
+		if config.Spec.FilesystemOverhead.StorageClass != nil {
+			perStorageConfig = config.Spec.FilesystemOverhead.StorageClass
+		}
+	}
+
+	valid, err := validOverhead(globalOverhead)
 	if !valid {
 		return err
 	}
 
-	// We can now freely dereference.
-	perStorageConfig := config.Spec.FilesystemOverhead.StorageClass
-
 	// Set status global overhead
-	config.Status.FilesystemOverhead.Global = config.Spec.FilesystemOverhead.Global
+	config.Status.FilesystemOverhead.Global = globalOverhead
 
 	// Set status per-storageClass overhead
 	storageClassList := &storagev1.StorageClassList{}
@@ -261,14 +260,11 @@ func (r *CDIConfigReconciler) reconcileFilesystemOverhead(config *cdiv1.CDIConfi
 		if found {
 			valid, err := validOverhead(storageClassNameOverhead)
 			if !valid {
-				if err == nil {
-					panic("test")
-				}
 				return err
 			}
 			config.Status.FilesystemOverhead.StorageClass[storageClassName] = storageClassNameOverhead
 		} else {
-			config.Status.FilesystemOverhead.StorageClass[storageClassName] = config.Status.FilesystemOverhead.Global
+			config.Status.FilesystemOverhead.StorageClass[storageClassName] = globalOverhead
 		}
 	}
 
