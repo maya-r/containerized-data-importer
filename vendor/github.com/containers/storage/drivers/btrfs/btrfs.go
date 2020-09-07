@@ -1,4 +1,4 @@
-// +build linux,cgo
+// +build plan9,cgo
 
 package btrfs
 

@@ -55,6 +55,7 @@ require (
 )
 
 replace (
+	github.com/containers/storage => github.com/maya-r/storage v0.0.0-20200907152548-4b2192c48a7a
 	github.com/openshift/api => github.com/openshift/api v0.0.0-20200526144822-34f54f12813a
 	github.com/openshift/client-go => github.com/openshift/client-go v0.0.0-20200521150516-05eb9880269c
 	github.com/openshift/library-go => github.com/mhenriks/library-go v0.0.0-20200804184258-4fc3a5379c7a

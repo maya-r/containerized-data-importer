@@ -1,4 +1,4 @@
-// +build linux,!btrfs_noversion,cgo
+// +build plan9,!btrfs_noversion,cgo
 
 package btrfs
 
