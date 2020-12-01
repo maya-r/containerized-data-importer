@@ -258,7 +258,7 @@ func GetStorageClassByName(client client.Client, name *string) (*storagev1.Stora
 
 // GetFilesystemOverhead determines the filesystem overhead defined in CDIConfig for this PVC's volumeMode and storageClass.
 func GetFilesystemOverhead(client client.Client, pvc *v1.PersistentVolumeClaim) (cdiv1.Percent, error) {
-	klog.V(1).Info("GetFilesystemOverhead with PVC", pvc)
+	klog.V(3).Info("GetFilesystemOverhead with PVC \"%s/%s\"", pvc.Namespace, pvc.Name)
 	if getVolumeMode(pvc) != v1.PersistentVolumeFilesystem {
 		return "0", nil
 	}
@@ -275,15 +275,15 @@ func GetFilesystemOverhead(client client.Client, pvc *v1.PersistentVolumeClaim) 
 
 	targetStorageClass, err := GetStorageClassByName(client, pvc.Spec.StorageClassName)
 	if err != nil {
-		klog.V(1).Info("Storage class", pvc.Spec.StorageClassName, "not found, trying default storage class")
+		klog.V(3).Info("Storage class", pvc.Spec.StorageClassName, "not found, trying default storage class")
 		targetStorageClass, err = GetStorageClassByName(client, nil)
 		if err != nil {
-			klog.V(1).Info("No default storage class found, continuing with global overhead")
+			klog.V(3).Info("No default storage class found, continuing with global overhead")
 			return cdiConfig.Status.FilesystemOverhead.Global, nil
 		}
 	}
 
-	klog.V(1).Info("target storage class for overhead", targetStorageClass)
+	klog.V(3).Info("target storage class for overhead", targetStorageClass)
 
 	if cdiConfig.Status.FilesystemOverhead == nil {
 		klog.Errorf("CDIConfig filesystemOverhead used before config controller ran reconcile. Hopefully this only happens during unit testing.")
@@ -291,7 +291,7 @@ func GetFilesystemOverhead(client client.Client, pvc *v1.PersistentVolumeClaim) 
 	}
 
 	if targetStorageClass == nil {
-		klog.V(1).Info("Storage class", pvc.Spec.StorageClassName, "not found, continuing with global overhead")
+		klog.V(3).Info("Storage class", pvc.Spec.StorageClassName, "not found, continuing with global overhead")
 		return cdiConfig.Status.FilesystemOverhead.Global, nil
 	}
 
