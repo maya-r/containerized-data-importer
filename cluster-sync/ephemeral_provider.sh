@@ -52,6 +52,7 @@ function configure_hpp() {
 function configure_ceph() {
   #Configure ceph storage.
   _kubectl apply -f ./cluster-sync/external-snapshotter
+  _kubectl apply -f ./cluster-sync/rook-ceph/crds.yaml
   _kubectl apply -f ./cluster-sync/rook-ceph/common.yaml
   if _kubectl get securitycontextconstraints; then
     _kubectl apply -f ./cluster-sync/rook-ceph/scc.yaml
